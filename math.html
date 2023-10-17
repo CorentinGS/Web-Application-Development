@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Newton-Raphson Method Calculator</title>
+</head>
+<body>
+<h1>Newton-Raphson Method Calculator</h1>
+<!-- Form to calculate the root. -->
+<form id="rootCalculator">
+    <!-- Initial guess for the root. -->
+    <label for="initialGuess">Initial Guess:</label>
+    <input id="initialGuess" required step="any" type="number" value="3">
+    <!-- How close to zero. -->
+    <label for="tolerance">Tolerance:</label>
+    <input id="tolerance" required step="any" type="number" value="1e-6">
+    <!-- The target function. -->
+    <label for="targetFunction">Target Function:</label>
+    <input id="targetFunction" required type="text" value="x*x-4">
+    <!-- The derivative of the target function. -->
+    <label for="derivativeFunction">Derivative Function:</label>
+    <input id="derivativeFunction" required type="text" value="2*x">
+    <!-- Submit the form to calculate the root. -->
+    <button type="submit">Calculate Root</button>
+</form>
+<!-- Div to display the result. -->
+<div id="result"></div>
+
+<div id="author">
+    <p> Made by: <br>
+        <a href="https://corentings.dev">Corentin GS.</a> <br>
+        <a href="https://github.com/corentings">Github</a> <br>
+    </p>
+</div>
+<script>
+    // Function to parse and evaluate a user-provided function string.
+    function parseFunction(funcString) {
+        return new Function('x', 'return ' + funcString); // Return the parsed function.
+    }
+
+    // Implement the Newton-Raphson method to find the root.
+    function newtonRaphson(initialGuess, tolerance, maxIterations, targetFunction, derivativeFunction) {
+        let x = initialGuess; // Initial guess for the root.
+        let iterations = 0; // Iteration counter.
+
+        // Parse the target function and its derivative.
+        const targetFunc = parseFunction(targetFunction);
+        const derivativeFunc = parseFunction(derivativeFunction);
+
+        // Iterate until the root is found or the maximum number of iterations is reached.
+        while (iterations < maxIterations) {
+            const fx = targetFunc(x); // Value of the target function.
+            const fpx = derivativeFunc(x); // Derivative of the target function.
+
+            // Check if the derivative is close to zero (avoid division by zero).
+            if (Math.abs(fpx) < 1e-6) {
+                return null; // Unable to find the root within the specified tolerance.
+            }
+
+            // Update the guess for the root.
+            x = x - fx / fpx;
+
+            // Check for convergence.
+            if (Math.abs(fx) < tolerance) {
+                return x; // Return the approximate root.
+            }
+
+            iterations++; // Increment the iteration counter.
+        }
+
+        return null; // Unable to find the root within the specified tolerance.
+    }
+
+    // Handle form submission to calculate the root.
+    const rootCalculatorForm = document.getElementById('rootCalculator'); // Form to calculate the root.
+    const resultDiv = document.getElementById('result'); // Div to display the result.
+
+    rootCalculatorForm.addEventListener('submit', function (event) { // Listen for form submission.
+        event.preventDefault(); // Prevent the form from submitting.
+
+        const initialGuess = parseFloat(document.getElementById('initialGuess').value); // Initial guess for the root from the input as a float.
+        const tolerance = parseFloat(document.getElementById('tolerance').value); // Tolerance from the input as a float (how close to zero).
+        const targetFunction = document.getElementById('targetFunction').value; // Target function from the input.
+        const derivativeFunction = document.getElementById('derivativeFunction').value; // Derivative function from the input.
+        const maxIterations = 100; // Maximum number of iterations.
+
+        const root = newtonRaphson(initialGuess, tolerance, maxIterations, targetFunction, derivativeFunction); // Calculate the root.
+
+        if (root !== null) { // Check if the root was found.
+            resultDiv.innerHTML = `The approximate root is: ${root.toFixed(6)}`; // Display the root.
+        } else { // The root was not found.
+            resultDiv.innerHTML = "Unable to find the root within the specified tolerance."; // Display an error message.
+        }
+    });
+</script>
+</body>
+</html>
