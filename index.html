@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <link href="https://fonts.googleapis.com/css?family=VT323&display=swap" rel="stylesheet">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@2.x.x/dist/alpine.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <title>Computer Components Order Form</title>
+</head>
+<!-- Body -->
+<body class="neo-brutalism" x-data="orderForm()">
+<div class="container">
+    <!-- Order Form -->
+    <h1>Computer Components Order Form</h1>
+    <form @submit.prevent="submitOrder" x-show="!submitted"> <!-- Hide the form when the order has been submitted -->
+        <label for="name">Name</label>
+        <input id="name" required type="text" x-model="name">
+
+        <label for="email">Email</label>
+        <input id="email" required type="email" x-model="email">
+
+        <label for="cpu">CPU</label>
+        <select id="cpu" x-model="cpu">
+            <option value="i5">Intel Core i5</option>
+            <option value="i7">Intel Core i7</option>
+            <option value="ryzen5">AMD Ryzen 5</option>
+            <option value="ryzen7">AMD Ryzen 7</option>
+        </select>
+
+        <label for="motherboard">Motherboard:</label>
+        <select id="motherboard" x-model="motherboard">
+            <option value="asus">ASUS</option>
+            <option value="msi">MSI</option>
+            <option value="gigabyte">GIGABYTE</option>
+            <option value="asrock">ASRock</option>
+        </select>
+
+        <label for="gpu">GPU</label>
+        <select id="gpu" x-model="gpu">
+            <option value="gtx1650">Nvidia GTX 1650</option>
+            <option value="rtx3070">Nvidia RTX 3070</option>
+            <option value="rx5600">AMD RX 5600</option>
+            <option value="rx6800">AMD RX 6800</option>
+        </select>
+
+        <label for="ram">RAM (GB)</label>
+        <input id="ram" required type="number" x-model="ram">
+
+        <label for="storage">Storage (GB)</label>
+        <input id="storage" required type="number" x-model="storage">
+
+        <label for="distro">GNU/Linux distribution</label>
+        <select id="distro" x-model="distro">
+            <option value="opensuse">OpenSuse</option>
+            <option value="void">Void</option>
+            <option value="arch">Arch Linux</option>
+            <option value="fedora">Fedora</option>
+            <option value="mandrake">Mandrake</option>
+        </select>
+
+        <button class="btn" type="submit">Place Order</button>
+    </form>
+    <!-- Order Summary -->
+    <div class="order-summary" id="order-summary" x-show="submitted">
+        <!-- Hide the order summary when the form has not been submitted -->
+        <h2>Your Order Summary</h2>
+        <p><strong>Name:</strong> <span x-text="name"></span></p>
+        <p><strong>Email:</strong> <span x-text="email"></span></p>
+        <p><strong>CPU:</strong> <span x-text="cpu"></span></p>
+        <p><strong>Motherboard:</strong> <span x-text="motherboard"></span></p>
+        <p><strong>GPU:</strong> <span x-text="gpu"></span></p>
+        <p><strong>RAM (GB):</strong> <span x-text="ram"></span></p>
+        <p><strong>Storage (GB):</strong> <span x-text="storage"></span></p>
+        <p><strong>GNU/Linux distribution:</strong> <span x-text="distro"></span></p>
+        <button class="btn" type="button" x-on:click="downloadOrderSummary">Download Order Summary as PDF</button>
+    </div>
+</div>
+<!-- YouTube video iframe -->
+<div id="youtube-video" x-show="showVideo">
+    <iframe :src="youtubeUrl" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen height="315"
+            src="https://www.youtube-nocookie.com/embed/oHNKTlz1lps" title="linus said"
+            width="560"></iframe>
+</div>
+<!-- Footer -->
+<footer class="neo-brutalism">
+    <div class="footer-content">
+        <div class="social-links">
+            <a href="https://corentings.dev" target="_blank">Website</a> |
+            <a href="https://github.com/corentings" target="_blank">Github</a> |
+        </div>
+        <div class="copyright">
+            &copy; MIT License
+        </div>
+    </div>
+</footer>
+</body>
+</html>
+
+<style>
+    /* Global Styles */
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #222;
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    /* YouTube Video Styles */
+    #youtube-video {
+        margin-top: 20px;
+        z-index: 9999;
+    }
+
+    /* Neo-Brutalism Styles */
+    .neo-brutalism {
+        font-family: 'VT323', monospace;
+        background-color: #000;
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Container Styles */
+    .container {
+        background-color: #333;
+        border: 1px solid #444;
+        border-radius: 5px;
+        padding: 20px;
+        text-align: center;
+        width: 100%;
+        max-width: 400px;
+    }
+
+    /* Form Element Styles */
+    label {
+        display: block;
+        margin-top: 10px;
+    }
+
+    input, select {
+        background-color: #222;
+        border: 1px solid #333;
+        border-radius: 5px;
+        color: #fff;
+        margin: 10px 0;
+        padding: 10px;
+        width: 90%;
+    }
+
+    /* Button Styles */
+    button.btn {
+        background-color: #ff3333;
+        border: none;
+        border-radius: 5px;
+        color: #fff;
+        cursor: pointer;
+        font-size: 16px;
+        margin-top: 10px;
+        padding: 10px 20px;
+        width: 100%;
+        transition: background-color 0.3s;
+    }
+
+    button.btn:hover {
+        background-color: #ff0000;
+    }
+
+    /* Order Summary Styles */
+    .order-summary {
+        background-color: #222;
+        border: 1px solid #333;
+        border-radius: 5px;
+        margin-top: 10px;
+        padding: 20px;
+        text-align: center;
+        flex: 1;
+    }
+
+    .order-summary h2 {
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+
+    .order-summary p {
+        margin: 5px 0;
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+        .container {
+            max-width: 100%;
+        }
+
+        input, select {
+            width: 95%;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .container {
+            padding: 10px;
+        }
+
+        input, select {
+            padding: 8px;
+        }
+
+        button.btn {
+            font-size: 14px;
+            padding: 8px 16px;
+        }
+    }
+
+    /* Footer Styles */
+    footer.neo-brutalism {
+        color: #777;
+        padding: 10px;
+        max-height: 10%;
+        margin-top: auto;
+    }
+
+    .footer-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .social-links a {
+        color: #FF6600;
+        text-decoration: none;
+        margin: 0 10px;
+    }
+
+    .social-links a:hover {
+        color: #FF8800;
+    }
+
+    /* Copyright Styles */
+    .copyright {
+        font-size: 14px;
+    }
+</style>
+
+<script type="text/javascript">
+    function orderForm() {
+        return {
+            name: '', // Name input
+            email: '', // Email input
+            cpu: 'i5', // CPU input
+            motherboard: 'asus', // Motherboard input
+            gpu: 'gtx1650', // GPU input
+            ram: 4, // RAM input
+            storage: 256, // Storage input
+            distro: 'opensuse', // GNU/Linux distribution input
+            submitted: false, // Whether the form has been submitted
+            showVideo: false, // Whether to show the YouTube video
+            youtubeVideoIds: {
+                opensuse: 'oHNKTlz1lps', // OpenSuse YouTube video ID
+                mandrake: 'dQw4w9WgXcQ', // Mandrake YouTube video ID
+            },
+            get youtubeUrl() {
+                return `https://www.youtube.com/embed/${this.youtubeVideoIds[this.distro]}`; // Return the YouTube video URL
+            },
+            submitOrder() {
+                this.submitted = true; // Set submitted to true to show the order summary
+                this.showVideo = this.distro === 'opensuse' || this.distro === 'mandrake'; // Show the video if the distro is OpenSuse or Mandrake
+
+            },
+
+            downloadOrderSummary() {
+                window.jsPDF = window.jspdf.jsPDF; // Import the jsPDF library
+                const doc = new jsPDF(); // Create a new jsPDF instance
+
+                doc.setFont('helvetica'); // Set the font
+                doc.setFontSize(14); // Set the font size
+
+                // Create the order summary content
+                const orderSummary = `
+                Order Summary
+                Name: ${this.name}
+                Email: ${this.email}
+                CPU: ${this.cpu}
+                Motherboard: ${this.motherboard}
+                GPU: ${this.gpu}
+                RAM (GB): ${this.ram}
+                Storage (GB): ${this.storage}
+                GNU/Linux distribution: ${this.distro}
+                `;
+
+                // Split the content into lines
+                const content = doc.splitTextToSize(orderSummary, 180);
+                doc.text(content, 10, 10); // Add the text to the PDF
+
+                // Save the PDF with a unique name
+                const fileName = `order_summary_${new Date().getTime()}.pdf`;
+                doc.save(fileName); // Download the PDF
+            }
+        };
+    }
+</script>
