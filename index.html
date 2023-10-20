@@ -23,26 +23,23 @@
 
         <label for="cpu">CPU</label>
         <select id="cpu" x-model="cpu">
-            <option value="i5">Intel Core i5</option>
-            <option value="i7">Intel Core i7</option>
-            <option value="ryzen5">AMD Ryzen 5</option>
-            <option value="ryzen7">AMD Ryzen 7</option>
+            <template x-for="cpuOption in cpuOptions">
+                <option :value="cpuOption.value" x-text="cpuOption.label"></option>
+            </template>
         </select>
 
         <label for="motherboard">Motherboard:</label>
         <select id="motherboard" x-model="motherboard">
-            <option value="asus">ASUS</option>
-            <option value="msi">MSI</option>
-            <option value="gigabyte">GIGABYTE</option>
-            <option value="asrock">ASRock</option>
+            <template x-for="motherboardOption in motherboardOptions">
+                <option :value="motherboardOption.value" x-text="motherboardOption.label"></option>
+            </template>
         </select>
 
         <label for="gpu">GPU</label>
         <select id="gpu" x-model="gpu">
-            <option value="gtx1650">Nvidia GTX 1650</option>
-            <option value="rtx3070">Nvidia RTX 3070</option>
-            <option value="rx5600">AMD RX 5600</option>
-            <option value="rx6800">AMD RX 6800</option>
+            <template x-for="gpuOption in gpuOptions">
+                <option :value="gpuOption.value" x-text="gpuOption.label"></option>
+            </template>
         </select>
 
         <label for="ram">RAM (GB)</label>
@@ -60,12 +57,27 @@
             <option value="mandrake">Mandrake</option>
         </select>
 
+        <label for="discount-code">Discount Code</label>
+        <input id="discount-code" type="text" x-model="discountCode">
+
+        <p><strong>Total Price:</strong> $<span x-text="totalPrice"></span></p>
+
         <button class="btn" type="submit">Place Order</button>
     </form>
+    <div class="discount-message" x-show="isDiscountApplied">
+        Discount applied! Your new total: $<span x-text="totalPrice.toFixed(2)"></span>
+    </div>
     <!-- Order Summary -->
-    <div class="order-summary" id="order-summary" x-show="submitted">
+    <div class="order-summary" id="order-summary" x-show="submitted"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-end="opacity-100 scale-100"
+         x-transition:enter-start="opacity-0 scale-90"
+         x-transition:leave="transition ease-in duration-300"
+         x-transition:leave-end="opacity-0 scale-90"
+         x-transition:leave-start="opacity-100 scale-100">
         <!-- Hide the order summary when the form has not been submitted -->
         <h2>Your Order Summary</h2>
+        <p><strong>Total Price:</strong> $<span x-text="totalPrice"></span></p>
         <p><strong>Name:</strong> <span x-text="name"></span></p>
         <p><strong>Email:</strong> <span x-text="email"></span></p>
         <p><strong>CPU:</strong> <span x-text="cpu"></span></p>
@@ -111,7 +123,6 @@
         flex-direction: column;
         min-height: 100vh;
     }
-
     /* YouTube Video Styles */
     #youtube-video {
         margin-top: 20px;
@@ -254,6 +265,34 @@
 
 <script type="text/javascript">
     function orderForm() {
+
+        function calculateCpuPrice(value) {
+            return {
+                i5: 200,
+                i7: 300,
+                ryzen5: 250,
+                ryzen7: 350,
+            }[value]; // Return the price of the CPU
+        }
+
+        function calculateGpuPrice(value) {
+            return {
+                gtx1650: 200,
+                rtx3070: 300,
+                rx5600: 250,
+                rx6800: 350,
+            }[value]; // Return the price of the GPU
+        }
+
+        function calculateMotherboardPrice(value) {
+            return {
+                asus: 100,
+                msi: 150,
+                gigabyte: 200,
+                asrock: 250,
+            }[value]; // Return the price of the motherboard
+        }
+
         return {
             name: '', // Name input
             email: '', // Email input
@@ -265,17 +304,77 @@
             distro: 'opensuse', // GNU/Linux distribution input
             submitted: false, // Whether the form has been submitted
             showVideo: false, // Whether to show the YouTube video
+            discountCode: '',
+            isDiscountApplied: false,
+            cpuOptions: [
+                {value: 'i5', label: 'Intel Core i5 (' + calculateCpuPrice('i5') + '$)'},
+                {value: 'i7', label: 'Intel Core i7 (' + calculateCpuPrice('i7') + '$)'},
+                {value: 'ryzen5', label: 'AMD Ryzen 5 (' + calculateCpuPrice('ryzen5') + '$)'},
+                {value: 'ryzen7', label: 'AMD Ryzen 7 (' + calculateCpuPrice('ryzen7') + '$)'},
+            ],
+            gpuOptions: [
+                {value: 'gtx1650', label: 'Nvidia GTX 1650 (' + calculateGpuPrice('gtx1650') + '$)'},
+                {value: 'rtx3070', label: 'Nvidia RTX 3070 (' + calculateGpuPrice('rtx3070') + '$)'},
+                {value: 'rx5600', label: 'AMD RX 5600 (' + calculateGpuPrice('rx5600') + '$)'},
+                {value: 'rx6800', label: 'AMD RX 6800 (' + calculateGpuPrice('rx6800') + '$)'},
+            ],
+            motherboardOptions: [
+                {value: 'asus', label: 'ASUS (' + calculateMotherboardPrice('asus') + '$)'},
+                {value: 'msi', label: 'MSI (' + calculateMotherboardPrice('msi') + '$)'},
+                {value: 'gigabyte', label: 'GIGABYTE (' + calculateMotherboardPrice('gigabyte') + '$)'},
+                {value: 'asrock', label: 'ASRock (' + calculateMotherboardPrice('asrock') + '$)'},
+            ],
+            distroOptions: [
+                {value: 'opensuse', label: 'OpenSuse'},
+                {value: 'void', label: 'Void'},
+                {value: 'arch', label: 'Arch Linux'},
+                {value: 'fedora', label: 'Fedora'},
+                {value: 'mandrake', label: 'Mandrake'},
+            ],
+
             youtubeVideoIds: {
                 opensuse: 'oHNKTlz1lps', // OpenSuse YouTube video ID
                 mandrake: 'dQw4w9WgXcQ', // Mandrake YouTube video ID
             },
+
             get youtubeUrl() {
                 return `https://www.youtube.com/embed/${this.youtubeVideoIds[this.distro]}`; // Return the YouTube video URL
             },
             submitOrder() {
+                if (this.discountCode === 'I_LOVE_IU') {
+                    // Replace 'YOUR_DISCOUNT_CODE' with the actual discount code
+                    this.isDiscountApplied = true;
+                }
                 this.submitted = true; // Set submitted to true to show the order summary
                 this.showVideo = this.distro === 'opensuse' || this.distro === 'mandrake'; // Show the video if the distro is OpenSuse or Mandrake
+            },
 
+            get cpuPrice() {
+                return calculateCpuPrice(this.cpu); // Return the price of the CPU
+            },
+
+            get motherboardPrice() {
+                return calculateMotherboardPrice(this.motherboard)
+            },
+
+            get gpuPrice() {
+                return calculateGpuPrice(this.gpu)
+            },
+
+            get ramPrice() {
+                return this.ram * 10; // Return the price of the RAM
+            },
+
+            get storagePrice() {
+                return this.storage * 0.5; // Return the price of the storage
+            },
+
+            get totalPrice() {
+                // check for a discount
+                if (this.isDiscountApplied) {
+                    return (this.cpuPrice + this.motherboardPrice + this.gpuPrice + this.ramPrice + this.storagePrice) * 0.9;
+                }
+                return this.cpuPrice + this.motherboardPrice + this.gpuPrice + this.ramPrice + this.storagePrice; // Return the total price
             },
 
             downloadOrderSummary() {
@@ -296,6 +395,7 @@
                 RAM (GB): ${this.ram}
                 Storage (GB): ${this.storage}
                 GNU/Linux distribution: ${this.distro}
+                Total Price: ${this.totalPrice}
                 `;
 
                 // Split the content into lines
