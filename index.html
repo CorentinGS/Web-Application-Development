@@ -14,40 +14,42 @@
 <div class="container">
     <!-- Order Form -->
     <h1>Computer Components Order Form</h1>
-    <form @submit.prevent="submitOrder" x-show="!submitted"> <!-- Hide the form when the order has been submitted -->
+    <!-- Hide the form when the order has been submitted -->
+    <form @submit.prevent="submitOrder" x-show="!submitted">
+        <!-- Name input -->
         <label for="name">Name</label>
         <input id="name" required type="text" x-model="name">
-
+        <!-- Email input -->
         <label for="email">Email</label>
         <input id="email" required type="email" x-model="email">
-
+        <!-- CPU input -->
         <label for="cpu">CPU</label>
         <select id="cpu" x-model="cpu">
             <template x-for="cpuOption in cpuOptions">
                 <option :value="cpuOption.value" x-text="cpuOption.label"></option>
             </template>
         </select>
-
+        <!-- Motherboard input -->
         <label for="motherboard">Motherboard:</label>
         <select id="motherboard" x-model="motherboard">
             <template x-for="motherboardOption in motherboardOptions">
                 <option :value="motherboardOption.value" x-text="motherboardOption.label"></option>
             </template>
         </select>
-
+        <!-- GPU input -->
         <label for="gpu">GPU</label>
         <select id="gpu" x-model="gpu">
             <template x-for="gpuOption in gpuOptions">
                 <option :value="gpuOption.value" x-text="gpuOption.label"></option>
             </template>
         </select>
-
+        <!-- RAM input -->
         <label for="ram">RAM (GB)</label>
         <input id="ram" required type="number" x-model="ram">
-
+        <!-- Storage input -->
         <label for="storage">Storage (GB)</label>
         <input id="storage" required type="number" x-model="storage">
-
+        <!-- GNU/Linux distribution input -->
         <label for="distro">GNU/Linux distribution</label>
         <select id="distro" x-model="distro">
             <option value="opensuse">OpenSuse</option>
@@ -56,14 +58,15 @@
             <option value="fedora">Fedora</option>
             <option value="mandrake">Mandrake</option>
         </select>
-
+        <!-- Discount code input -->
         <label for="discount-code">Discount Code</label>
         <input id="discount-code" type="text" x-model="discountCode">
-
+        <!-- Total price -->
         <p><strong>Total Price:</strong> $<span x-text="totalPrice"></span></p>
-
+        <!-- Submit the form to place the order -->
         <button class="btn" type="submit">Place Order</button>
     </form>
+    <!-- Discount message -->
     <div class="discount-message" x-show="isDiscountApplied">
         Discount applied! Your new total: $<span x-text="totalPrice.toFixed(2)"></span>
     </div>
@@ -114,24 +117,27 @@
 <style>
     /* Global Styles */
     body {
-        font-family: Arial, sans-serif;
+        font-family: Arial, sans-serif; /* Fallback font */
+        /* Fallback margin */
         margin: 0;
         padding: 0;
+        /* Fallback color */
         background-color: #222;
         color: #fff;
-        display: flex;
+        display: flex; /* Use flexbox */
         flex-direction: column;
-        min-height: 100vh;
+        min-height: 100vh; /* Make the body at least 100% of the viewport height */
     }
+
     /* YouTube Video Styles */
     #youtube-video {
         margin-top: 20px;
-        z-index: 9999;
+        z-index: 9999; /* Make sure the video is on top of the order summary */
     }
 
     /* Neo-Brutalism Styles */
     .neo-brutalism {
-        font-family: 'VT323', monospace;
+        font-family: 'VT323', monospace; /* Use the VT323 font */
         background-color: #000;
         color: #fff;
         display: flex;
@@ -159,6 +165,7 @@
         margin-top: 10px;
     }
 
+    /* Input Styles */
     input, select {
         background-color: #222;
         border: 1px solid #333;
@@ -183,6 +190,7 @@
         transition: background-color 0.3s;
     }
 
+    /* Button Hover Styles */
     button.btn:hover {
         background-color: #ff0000;
     }
@@ -195,14 +203,16 @@
         margin-top: 10px;
         padding: 20px;
         text-align: center;
-        flex: 1;
+        flex: 1; /* Make the order summary take up the remaining space */
     }
 
+    /* Order Summary Heading Styles */
     .order-summary h2 {
         font-size: 20px;
         margin-bottom: 10px;
     }
 
+    /* Order Summary Paragraph Styles */
     .order-summary p {
         margin: 5px 0;
     }
@@ -266,6 +276,7 @@
 <script type="text/javascript">
     function orderForm() {
 
+        // Function to calculate the price of the CPU
         function calculateCpuPrice(value) {
             return {
                 i5: 200,
@@ -275,6 +286,7 @@
             }[value]; // Return the price of the CPU
         }
 
+        // Function to calculate the price of the GPU
         function calculateGpuPrice(value) {
             return {
                 gtx1650: 200,
@@ -284,6 +296,7 @@
             }[value]; // Return the price of the GPU
         }
 
+        // Function to calculate the price of the motherboard
         function calculateMotherboardPrice(value) {
             return {
                 asus: 100,
@@ -304,8 +317,8 @@
             distro: 'opensuse', // GNU/Linux distribution input
             submitted: false, // Whether the form has been submitted
             showVideo: false, // Whether to show the YouTube video
-            discountCode: '',
-            isDiscountApplied: false,
+            discountCode: '', // Discount code input
+            isDiscountApplied: false, // Whether the discount has been applied
             cpuOptions: [
                 {value: 'i5', label: 'Intel Core i5 (' + calculateCpuPrice('i5') + '$)'},
                 {value: 'i7', label: 'Intel Core i7 (' + calculateCpuPrice('i7') + '$)'},
@@ -349,6 +362,7 @@
                 this.showVideo = this.distro === 'opensuse' || this.distro === 'mandrake'; // Show the video if the distro is OpenSuse or Mandrake
             },
 
+            // Getters
             get cpuPrice() {
                 return calculateCpuPrice(this.cpu); // Return the price of the CPU
             },
@@ -377,6 +391,7 @@
                 return this.cpuPrice + this.motherboardPrice + this.gpuPrice + this.ramPrice + this.storagePrice; // Return the total price
             },
 
+            // Function to download the order summary as a PDF
             downloadOrderSummary() {
                 window.jsPDF = window.jspdf.jsPDF; // Import the jsPDF library
                 const doc = new jsPDF(); // Create a new jsPDF instance
